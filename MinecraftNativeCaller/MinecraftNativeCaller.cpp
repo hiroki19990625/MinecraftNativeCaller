@@ -9,34 +9,39 @@ HMODULE get_module();
 
 DWORD_PTR get_func(DWORD_PTR base, DWORD_PTR offset);
 
-//extern "C" __declspec(dllexport) 
+extern "C" __declspec(dllexport) DWORD_PTR call_out(DWORD_PTR offset);
 
-typedef void (*UnExportedFunc)();
+using Func = void(*)();
 
 int main()
 {
     std::cout << "Starting Server...\n";
 
-	const DWORD_PTR main_offset = 0x00057B70;
-	const auto hMod = get_module();
-	if (hMod == nullptr)
+	const DWORD_PTR main_offset = 0x00058B70;
+	const auto h_mod = get_module();
+	if (h_mod == nullptr)
 	{
 		std::cout << "DLL not found.\n";
 		return -1;
 	}
 
-	const auto func = reinterpret_cast<UnExportedFunc>(get_func(reinterpret_cast<DWORD_PTR>(hMod), main_offset));
+	const auto func = reinterpret_cast<Func>(get_func(reinterpret_cast<DWORD_PTR>(h_mod), main_offset));
 	func();
 }
 
 HMODULE get_module()
 {
-	return LoadLibraryA("C:\\Users\\hiroki\\Desktop\\server\\MinecraftNativeCaller\\x64\\Debug\\bedrock_server.exe");
+	return LoadLibraryA(R"(C:\Users\hiroki\Desktop\server\bedrock-server-1.12.0.28\bedrock_server.exe)");
 }
 
 DWORD_PTR get_func(DWORD_PTR base, const DWORD_PTR offset)
 {
 	return base + offset;
+}
+
+DWORD_PTR call_out(DWORD_PTR offset)
+{
+	return get_func(reinterpret_cast<DWORD_PTR>(get_module()), offset);
 }
 
 // プログラムの実行: Ctrl + F5 または [デバッグ] > [デバッグなしで開始] メニュー
