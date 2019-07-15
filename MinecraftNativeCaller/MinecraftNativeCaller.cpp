@@ -38,6 +38,7 @@ int main()
 
 HMODULE get_module()
 {
+	// your 'bedrock_server.exe' path.
 	return LoadLibraryA(R"(C:\Users\hiroki\Desktop\server\bedrock-server-1.12.0.28\bedrock_server.exe)");
 }
 
